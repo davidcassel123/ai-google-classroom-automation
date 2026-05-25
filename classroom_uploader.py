@@ -1,40 +1,14 @@
-import os
-import pickle
 import json
 
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
+from normalizer import normalize_item
+from validator import validate_item
 from dateutil import parser
+from datetime import datetime
 
-SCOPES = [
-    "https://www.googleapis.com/auth/classroom.courses",
-    "https://www.googleapis.com/auth/classroom.coursework.students"
-]
+from google_auth import get_classroom_service
 
-def get_service():
-    creds = None
+service = get_classroom_service()
 
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
-            creds = pickle.load(token)
-
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json",
-                SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-
-        with open("token.pickle", "wb") as token:
-            pickle.dump(creds, token)
-
-    return build("classroom", "v1", credentials=creds)
-
-service = get_service()
 
 courses = service.courses().list().execute().get("courses", [])
 
@@ -42,10 +16,17 @@ for c in courses:
     print(c["id"], c["name"])
     
   
-    # took out description from this list for now
 def create_assignment(service, course_id, title, description, due_date):
-    # Convert flexible date string into parsed Python date
-    parsed_date = parser.parse(due_date)
+    
+    today = datetime.now()
+
+    parsed_date = parser.parse(
+        f"{due_date} {today.year}"
+    )
+
+    # If parsed date already passed, assume next year
+    if parsed_date.date() < today.date():
+        parsed_date = parsed_date.replace(year=today.year + 1)
     
     print("Creating assignment:", title)
     
@@ -60,12 +41,6 @@ def create_assignment(service, course_id, title, description, due_date):
             "month": parsed_date.month,
             "day": parsed_date.day
         },
-
-        # "dueDate": {
-        #     "year": int(due_date[:4]),
-        #     "month": int(due_date[5:7]),
-        #     "day": int(due_date[8:10])
-        # },
         "dueTime": {
             "hours": 23,
             "minutes": 59
@@ -80,24 +55,59 @@ def create_assignment(service, course_id, title, description, due_date):
 print("Assignment created successfully")
     
     
-    
-    
-    
-
-with open("parsed_syllabus.json", "r") as f:
+with open("firstrealsyllabus.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
-service = get_service()
+service = get_classroom_service()
 
 print("Starting uploader...")
 
-print(data)
 
-for item in data:
-    create_assignment(
-        service,
-        course_id="793951654742",
-        title=item["assignment_title"],
-        description=item["description"],
-        due_date=item["due_date"]
-    )
+failed_items = []
+
+for i, raw_item in enumerate(data):
+
+    try:
+        print(f"\n--- Processing item {i+1} ---")
+
+        # 1. Normalize AI output into clean structure
+        item = normalize_item(raw_item)
+
+        # 2. Validate required fields exist
+        validate_item(item)
+
+        # 3. Upload to Google Classroom
+        print("Creating assignment:", item["title"])
+
+        result = create_assignment(
+            service,
+            course_id=865977290508,
+            title=item["title"],
+            description=item["description"],
+            due_date=item["due_date"]
+        )
+
+        print("SUCCESS:", result.get("id"))
+
+    except Exception as e:
+        print("FAILED ITEM:", raw_item)
+        print("ERROR:", str(e))
+
+        failed_items.append({
+            "item": raw_item,
+            "error": str(e)
+        })
+
+
+# BELOW is the way to get course ID do not delete
+
+# service = get_classroom_service()
+
+# courses = service.courses().list().execute().get("courses", [])
+
+# print("\nAVAILABLE COURSES:\n")
+
+# for c in courses:
+#     print("Course Name:", c["name"])
+#     print("Course ID:", c["id"])
+#     print("-------------------")

@@ -13,7 +13,7 @@ client = OpenAI(api_key=api_key)
 
 
 # Read syllabus file
-with open("examplesyllabus.txt", "r") as file:
+with open("plumoutput.txt", "r", encoding="utf-8") as file:
     syllabus_text = file.read()
 
 prompt = f"""
@@ -22,15 +22,31 @@ Extract structured course information from this syllabus.
 Return ONLY valid JSON.
 
 Format:
-[
+ [ 
+ {{
+        "course_name": "",
+        "description": "",
+        "teacher_name": ""
+        }},
   {{
-    "week": 0,
+    "week": 1,
     "topic": "",
-    "reading": "",
     "assignment_title": "",
-    "due_date": ""
+    "description": "",
+    "due_date": "YYYY-MM-DD",
+    "materials": []
   }}
 ]
+
+# [ this was for simple testing, but the actual output is more complex
+#   {{
+#     "week": 0,
+#     "topic": "",
+#     "reading": "",
+#     "assignment_title": "",
+#     "due_date": ""
+#   }}
+# ]
 
 Syllabus:
 {syllabus_text}

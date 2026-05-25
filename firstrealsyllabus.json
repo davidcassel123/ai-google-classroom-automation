@@ -1,0 +1,181 @@
+[
+  {
+    "course_name": "Spiritual Transformation 1 (ST101)",
+    "description": "A study and application of concepts and disciplines that foster spiritual growth and transformation essential for being a disciple of Jesus Christ. The course emphasizes experiential learning focusing on spiritual disciplines such as prayer, fasting, solitude, meditation, study, and forgiveness. Themes include nurturing desire to know God intimately, believers’ identity in Christ, God's grace, and biblical/theological study of John 15 and Romans 8.",
+    "teacher_name": "Rachel Harlan, M.A.; Caleb Harlan, M.A.; Kate Trezise"
+  },
+  {
+    "week": 1,
+    "topic": "Discipleship overview; Desire",
+    "assignment_title": "READ: entire syllabus (before class)",
+    "description": "Introduction to course overview and discipleship emphasis on desire to know God.",
+    "due_date": "2025-08-25",
+    "materials": []
+  },
+  {
+    "week": 2,
+    "topic": "Discipleship & Followship",
+    "assignment_title": "READ: Foster Ch 1 (pp.1-11); “Fan or Follower” (excerpt in ST Binder)",
+    "description": "Reading on spiritual disciplines and the concept of followship as a disciple.",
+    "due_date": "2025-08-29",
+    "materials": [
+      "Foster, Richard. Celebration of Discipline, Chapter 1 (pp. 1-11)",
+      "ST Binder excerpt: Fan or Follower"
+    ]
+  },
+  {
+    "week": 3,
+    "topic": "Biblical Strategies - emphasis: Prayer",
+    "assignment_title": "READ: Moser “Just Like Jesus” (pp. 7-24) – AT TAP",
+    "description": "Study focus on prayer as a biblical strategy for spiritual growth.",
+    "due_date": "2025-09-04",
+    "materials": [
+      "Moser, Phil. Just Like Jesus, pp. 7-24"
+    ]
+  },
+  {
+    "week": 4,
+    "topic": "Biblical Strategies - emphasis: Word",
+    "assignment_title": "READ: Moser “Just Like Jesus” (pp. 7-9, 25-39)",
+    "description": "Focus on the Word as a spiritual discipline and biblical strategy.",
+    "due_date": "2025-09-12",
+    "materials": [
+      "Moser, Phil. Just Like Jesus, pp. 7-9, 25-39"
+    ]
+  },
+  {
+    "week": 4,
+    "topic": "Scripture Memory",
+    "assignment_title": "RECITE: Scripture Memory Checkpoint 1 (cards 1-4)",
+    "description": "Oral recitation of assigned scripture passages for memory checkpoint 1.",
+    "due_date": "2025-09-12",
+    "materials": []
+  },
+  {
+    "week": 5,
+    "topic": "Sabbath",
+    "assignment_title": "WRITE: Advanced organizer “Sabbath” (Do 1st, tan sheet in ST binder), READ: Barton Ch 8 “Sabbath” (Do 2nd)",
+    "description": "Study and reflection on the Sabbath with written assignment and reading.",
+    "due_date": "2025-09-19",
+    "materials": [
+      "Barton, Ruth Haley. Sacred Rhythms, Chapter 8: Sabbath",
+      "ST binder: Advanced organizer “Sabbath” sheet"
+    ]
+  },
+  {
+    "week": 6,
+    "topic": "Solitude, Silence",
+    "assignment_title": "READ: Foster ch 7; Buchanan ch 17 (for credit students)",
+    "description": "Exploration of solitude and silence as spiritual disciplines.",
+    "due_date": "2025-09-26",
+    "materials": [
+      "Foster, Richard. Celebration of Discipline, Chapter 7",
+      "Buchanan, Mark. Your God is Too Safe, Chapter 17 (for credit students)"
+    ]
+  },
+  {
+    "week": 7,
+    "topic": "Fasting",
+    "assignment_title": "READ: Foster ch 4; Piper’s A Hunger for God: “Preface,” “Introduction,” and “Conclusion” (excerpt in ST Binder) – AT TIOGA when due",
+    "description": "Study of fasting as a spiritual discipline with related readings.",
+    "due_date": "2025-10-01",
+    "materials": [
+      "Foster, Richard. Celebration of Discipline, Chapter 4",
+      "Piper, John. A Hunger for God (Preface, Introduction, Conclusion) - ST Binder excerpt"
+    ]
+  },
+  {
+    "week": 8,
+    "topic": "Eucharisteo and John 15",
+    "assignment_title": "READ: Voskamp ch 3 (excerpt in ST Binder)",
+    "description": "Focus on the practice of Eucharisteo (gratitude) and study of John 15.",
+    "due_date": "2025-10-07",
+    "materials": [
+      "Voskamp, Ann. One Thousand Gifts, Chapter 3 (ST Binder excerpt)"
+    ]
+  },
+  {
+    "week": 9,
+    "topic": "Scripture Memory",
+    "assignment_title": "RECITE: Scripture Memory Checkpoint 2 (cards 1-9)",
+    "description": "Oral recitation for second scripture memory checkpoint.",
+    "due_date": "2025-10-14",
+    "materials": []
+  },
+  {
+    "week": 9,
+    "topic": "Grace",
+    "assignment_title": "READ: Yancey ch 2 & ch 4 (for credit students)",
+    "description": "Study of God's grace in Christian life and spiritual disciplines.",
+    "due_date": "2025-10-17",
+    "materials": [
+      "Yancey, Philip. What's So Amazing About Grace, Chapters 2 & 4"
+    ]
+  },
+  {
+    "week": 10,
+    "topic": "Identity in Christ",
+    "assignment_title": "READ: Anderson Victory Over the Darkness ch 2, “The Whole Gospel” (excerpt in ST Binder)",
+    "description": "Exploration of the believer’s identity in Christ and applying these truths for spiritual growth.",
+    "due_date": "2025-10-24",
+    "materials": [
+      "Anderson, Neil T. Victory Over the Darkness, Chapter 2",
+      "ST Binder excerpt: The Whole Gospel"
+    ]
+  },
+  {
+    "week": 11,
+    "topic": "Conflict & Reconciliation: fighting well",
+    "assignment_title": "READ: Peace Pursuit (excerpt in ST Binder) – In NH when due",
+    "description": "Biblical approach to conflict, reconciliation, and spiritual peace.",
+    "due_date": "2025-10-31",
+    "materials": [
+      "Peace Pursuit (ST Binder excerpt)"
+    ]
+  },
+  {
+    "week": 12,
+    "topic": "Biblical Strategies - emphasis: Holy Spirit",
+    "assignment_title": "READ: Moser “Just Like Jesus” (pp. 41-54)",
+    "description": "Study of the Holy Spirit's role in spiritual transformation.",
+    "due_date": "2025-11-07",
+    "materials": [
+      "Moser, Phil. Just Like Jesus, pp. 41-54"
+    ]
+  },
+  {
+    "week": 12,
+    "topic": "Identity in Christ Paper",
+    "assignment_title": "WRITE: Identity in Christ assignment",
+    "description": "Written paper due discussing the topic of Identity in Christ.",
+    "due_date": "2025-11-11",
+    "materials": []
+  },
+  {
+    "week": 13,
+    "topic": "Spiritual Retreat",
+    "assignment_title": "READ: Foster Ch 1; Calhoun “Retreat” (pp. 77-79), “Meditation” (pp. 191-193), \"Prayer of Recollection\" (pp. 281-283). Bring personal journals to class.",
+    "description": "Retreat and meditation practices with spiritual journaling.",
+    "due_date": "2025-11-14",
+    "materials": [
+      "Foster, Richard. Celebration of Discipline, Chapter 1",
+      "Calhoun selections: Retreat (pp. 77-79), Meditation (pp. 191-193), Prayer of Recollection (pp. 281-283)"
+    ]
+  },
+  {
+    "week": 14,
+    "topic": "Semester Break Planning and Reflection",
+    "assignment_title": "WRITE: Semester Break Plan due @ Exit Talks; WRITE: Semester Break Reflection",
+    "description": "Prepare and submit spiritual formation plan and reflection for semester break. Bring journals to Exit Talks.",
+    "due_date": "2025-11-21 and 2025-11-24",
+    "materials": []
+  },
+  {
+    "week": 14,
+    "topic": "Scripture Memory",
+    "assignment_title": "RECITE: Scripture Memory Checkpoint 3 (cards 1-12)",
+    "description": "Final oral scripture memory checkpoint.",
+    "due_date": "2025-11-24",
+    "materials": []
+  }
+]

@@ -4,13 +4,17 @@
     "topic": "Introduction to Theology",
     "reading": "Genesis Chapters 1-3",
     "assignment_title": "Reflection Paper",
-    "due_date": "September 10"
+    "due_date": "September 10",
+    "description": "Write a 2-page reflection paper on the creation narrative and its theological implications."
   },
   {
     "week": 2,
     "topic": "Old Testament History",
     "reading": "Exodus Chapters 1-5",
     "assignment_title": "Reading Response",
-    "due_date": "September 17"
+    "due_date": "September 17",
+    "description": "Read and summarize the assigned chapters."
   }
 ]
+
+

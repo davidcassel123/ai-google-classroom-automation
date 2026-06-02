@@ -1,49 +1,37 @@
-import os.path
-import pickle
+from fastapi import FastAPI, UploadFile, File
+from classroom_uploader import get_classroom_service
+from fastapi import FastAPI, Request, UploadFile, File, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
+app = FastAPI()
 
-# Google Classroom read-only scope
-SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
+templates = Jinja2Templates(directory="templates")
 
-def main():
-    creds = None
+service = get_classroom_service()
 
-    # token.pickle stores the user's access and refresh tokens
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+@app.post("/upload-syllabus")
+async def upload_syllabus(file: UploadFile = File(...)):
 
-    # If there are no valid credentials, let the user log in
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json',
-                SCOPES
-            )
-            creds = flow.run_local_server(port=0)
+    content = await file.read()
 
-        # Save the credentials for future runs
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+    # STEP 1: parse PDF/text (you already have this)
+    text = content.decode("utf-8", errors="ignore")
 
-    # Build the Classroom service
-    service = build('classroom', 'v1', credentials=creds)
+    # STEP 2: AI processing (plug your OpenAI logic here)
 
-    # Call the Classroom API
-    results = service.courses().list().execute()
-    courses = results.get('courses', [])
+    return {"message": "uploaded", "preview": []}
 
-    if not courses:
-        print('No courses found.')
-    else:
-        print('Courses:')
-        for course in courses:
-            print(f"- {course['name']}")
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-if __name__ == '__main__':
-    main()
+@app.post("/upload")
+async def upload(file: UploadFile = File(...)):
+
+    content = await file.read()
+
+    text = content.decode("utf-8", errors="ignore")
+
+    # later: PDF + AI pipeline
+    return {"message": "file received"}

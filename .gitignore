@@ -3,3 +3,9 @@ token.pickle
 __pycache__/
 .env
 token*.pickle
+dist/
+build/
+*.zip
+*.exe
+*.pkg
+

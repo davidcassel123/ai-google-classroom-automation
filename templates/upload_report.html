@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Upload Report</title>
+  </head>
+  <body>
+    <h1>Google Classroom Upload Report</h1>
+
+    {% if report.course_name %}
+    <p>
+      <strong>Class:</strong> {{ report.course_name }} ({{ report.course_id }})
+    </p>
+    {% else %}
+    <p><strong>Class ID:</strong> {{ report.course_id }}</p>
+    {% endif %}
+
+    <p><strong>Attempted:</strong> {{ report.attempted }}</p>
+    <p><strong>Uploaded:</strong> {{ report.uploaded }}</p>
+    <p>
+      <strong>Skipped as duplicates:</strong> {{ report.duplicates_skipped }}
+    </p>
+    <p><strong>Failed:</strong> {{ report.failed }}</p>
+
+    {% if failed_items and failed_items|length > 0 %}
+    <h2>Failed Items</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Due Date</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in failed_items %}
+        <tr>
+          <td>{{ row.item.title }}</td>
+          <td>{{ row.item.due_date }}</td>
+          <td>{{ row.error }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>All attempted assignments were processed without upload failures.</p>
+    {% endif %}
+
+    <br />
+    <a href="/">Return to Home</a>
+  </body>
+</html>

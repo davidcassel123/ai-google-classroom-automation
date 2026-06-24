@@ -1,0 +1,37 @@
+LIFT Classroom Uploader
+
+What this app does:
+This app lets you choose a Google Classroom class, upload a syllabus PDF, review the assignments it found, edit them if needed, and then send them to Google Classroom.
+
+How to use it:
+1. Double-click LIFTClassroomUploader.exe.
+2. Your web browser should open automatically.
+3. On the first screen, choose the Google Classroom class.
+4. Select the syllabus PDF.
+5. Click Preview Assignments.
+6. Review the assignments.
+7. You can change any title, due date, or description.
+8. You can click Add Assignment to create a new one.
+9. You can click Remove This Assignment to delete one.
+10. Click Upload Edited Assignments.
+11. Review the final report for anything that failed.
+
+Important notes:
+- The first time you use the app, Google may ask you to sign in.
+- Keep the .env file in the same folder as the .exe file.
+- Keep credentials.json in the same folder as the .exe file.
+- After you sign in once, the app should remember you on that computer.
+- If the browser does not open automatically, open this address manually:
+  http://127.0.0.1:8000
+
+Files that should stay together in the same folder:
+- LIFTClassroomUploader.exe
+- .env
+- credentials.json
+- HOW_TO_USE.txt
+
+If something goes wrong:
+- Close the app and open it again.
+- Make sure the internet is working.
+- Make sure credentials.json is still in the same folder as the .exe.
+- If Google sign-in fails, ask the person who set up the app for help.

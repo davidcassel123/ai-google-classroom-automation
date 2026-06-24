@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Preview Assignments</title>
+  </head>
+  <body>
+    <h1>Preview Assignments</h1>
+
+    {% if course_name %}
+    <p><strong>Selected Class:</strong> {{ course_name }} ({{ course_id }})</p>
+    {% else %}
+    <p><strong>Selected Class ID:</strong> {{ course_id }}</p>
+    {% endif %} {% if openai_allowed %}
+    <p><strong>OpenAI API usage:</strong> Allowed for this run</p>
+    {% else %}
+    <p><strong>OpenAI API usage:</strong> Denied for this run</p>
+    {% endif %}
+
+    <form action="/upload" method="post">
+      <input type="hidden" name="course_id" value="{{ course_id }}" />
+      <input type="hidden" name="course_name" value="{{ course_name }}" />
+
+      <p>
+        Edit any assignment fields before uploading. You can add or remove rows
+        here.
+      </p>
+
+      <div id="assignment-list">
+        {% if assignments and assignments|length > 0 %} {% for item in
+        assignments %}
+        <div class="assignment-card">
+          <hr />
+
+          <h3>Assignment {{ loop.index }}</h3>
+
+          <label>Title</label><br />
+          <input
+            type="text"
+            name="title"
+            value="{{ item.title }}"
+            style="width: 80%"
+            required
+          />
+          <br /><br />
+
+          <label>Due Date</label><br />
+          <input
+            type="text"
+            name="due_date"
+            value="{{ item.due_date }}"
+            placeholder="e.g. Sep 12"
+            style="width: 40%"
+          />
+          <br /><br />
+
+          <label>Description</label><br />
+          <textarea name="description" rows="5" style="width: 80%">
+{{ item.description }}</textarea
+          >
+          <br /><br />
+
+          <button type="button" class="remove-assignment">
+            Remove This Assignment
+          </button>
+        </div>
+        {% endfor %} {% else %}
+        <div class="assignment-card">
+          <hr />
+
+          <h3>Assignment 1</h3>
+
+          <label>Title</label><br />
+          <input type="text" name="title" style="width: 80%" required />
+          <br /><br />
+
+          <label>Due Date</label><br />
+          <input
+            type="text"
+            name="due_date"
+            placeholder="e.g. Sep 12"
+            style="width: 40%"
+          />
+          <br /><br />
+
+          <label>Description</label><br />
+          <textarea name="description" rows="5" style="width: 80%"></textarea>
+          <br /><br />
+
+          <button type="button" class="remove-assignment">
+            Remove This Assignment
+          </button>
+        </div>
+        {% endif %}
+      </div>
+
+      <br />
+      <button type="button" id="add-assignment">Add Assignment</button>
+      <button type="submit">Upload Edited Assignments</button>
+    </form>
+
+    <template id="assignment-template">
+      <div class="assignment-card">
+        <hr />
+        <h3>Assignment</h3>
+
+        <label>Title</label><br />
+        <input type="text" name="title" style="width: 80%" required />
+        <br /><br />
+
+        <label>Due Date</label><br />
+        <input
+          type="text"
+          name="due_date"
+          placeholder="e.g. Sep 12"
+          style="width: 40%"
+        />
+        <br /><br />
+
+        <label>Description</label><br />
+        <textarea name="description" rows="5" style="width: 80%"></textarea>
+        <br /><br />
+
+        <button type="button" class="remove-assignment">
+          Remove This Assignment
+        </button>
+      </div>
+    </template>
+
+    <script>
+      const assignmentList = document.getElementById("assignment-list");
+      const assignmentTemplate = document.getElementById("assignment-template");
+      const addAssignmentButton = document.getElementById("add-assignment");
+
+      function updateAssignmentHeadings() {
+        const cards = assignmentList.querySelectorAll(".assignment-card");
+        cards.forEach((card, index) => {
+          const heading = card.querySelector("h3");
+          if (heading) {
+            heading.textContent = `Assignment ${index + 1}`;
+          }
+        });
+      }
+
+      function attachRemoveHandler(button) {
+        button.addEventListener("click", () => {
+          const cards = assignmentList.querySelectorAll(".assignment-card");
+          if (cards.length === 1) {
+            const firstCard = cards[0];
+            firstCard.querySelector('input[name="title"]').value = "";
+            firstCard.querySelector('input[name="due_date"]').value = "";
+            firstCard.querySelector('textarea[name="description"]').value = "";
+            return;
+          }
+
+          button.closest(".assignment-card").remove();
+          updateAssignmentHeadings();
+        });
+      }
+
+      assignmentList
+        .querySelectorAll(".remove-assignment")
+        .forEach(attachRemoveHandler);
+
+      addAssignmentButton.addEventListener("click", () => {
+        const fragment = assignmentTemplate.content.cloneNode(true);
+        const removeButton = fragment.querySelector(".remove-assignment");
+        attachRemoveHandler(removeButton);
+        assignmentList.appendChild(fragment);
+        updateAssignmentHeadings();
+      });
+
+      updateAssignmentHeadings();
+    </script>
+  </body>
+</html>

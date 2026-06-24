@@ -1,5 +1,6 @@
 import os
 import pickle
+import sys
 
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -14,13 +15,28 @@ SCOPES = [
 SCOPES_VERSION = "v2"
 TOKEN_FILE = f"token_{SCOPES_VERSION}.pickle"
 
+
+def get_runtime_base_dir():
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def get_credentials_path():
+    return os.path.join(get_runtime_base_dir(), "credentials.json")
+
+
+def get_token_path():
+    return os.path.join(get_runtime_base_dir(), TOKEN_FILE)
+
 def get_classroom_service():
 
     creds = None
+    token_path = get_token_path()
 
     # Load existing token if it exists
-    if os.path.exists(TOKEN_FILE):
-        with open(TOKEN_FILE, "rb") as token:
+    if os.path.exists(token_path):
+        with open(token_path, "rb") as token:
             creds = pickle.load(token)
 
     # If credentials missing or invalid
@@ -36,18 +52,18 @@ def get_classroom_service():
             print("Performing fresh OAuth login...")
 
             # Delete stale token automatically
-            if os.path.exists(TOKEN_FILE):
-                os.remove(TOKEN_FILE)
+            if os.path.exists(token_path):
+                os.remove(token_path)
 
             flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json",
+                get_credentials_path(),
                 SCOPES
             )
 
             creds = flow.run_local_server(port=0)
 
         # Save fresh token
-        with open(TOKEN_FILE, "wb") as token:
+        with open(token_path, "wb") as token:
             pickle.dump(creds, token)
 
     print("Authentication successful.")

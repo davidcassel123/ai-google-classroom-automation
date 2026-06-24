@@ -1,4 +1,5 @@
 import json
+import re
 
 from normalizer import normalize_item
 from validator import validate_item
@@ -7,26 +8,56 @@ from datetime import datetime
 
 from google_auth import get_classroom_service
 
-service = get_classroom_service()
+
+DATE_LIKE_PATTERNS = [
+    r"\b\d{4}-\d{1,2}-\d{1,2}\b",
+    r"\b\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?\b",
+    r"\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:,\s*\d{4})?\b",
+    r"\b\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\b",
+]
 
 
-courses = service.courses().list().execute().get("courses", [])
+def _clean_due_date_text(due_date):
+    if due_date is None:
+        return ""
 
-for c in courses:
-    print(c["id"], c["name"])
+    return str(due_date).strip()
+
+
+def _looks_like_date(due_date_text):
+    lowered = due_date_text.lower()
+    return any(re.search(pattern, lowered) for pattern in DATE_LIKE_PATTERNS)
+
+
+def _parse_due_date(due_date):
+    due_date_text = _clean_due_date_text(due_date)
+
+    if not due_date_text or not _looks_like_date(due_date_text):
+        return None
+
+    today = datetime.now()
+
+    parse_candidates = [due_date_text]
+
+    if not re.search(r"\b\d{4}\b", due_date_text):
+        parse_candidates.append(f"{due_date_text} {today.year}")
+
+    for candidate in parse_candidates:
+        try:
+            parsed_date = parser.parse(candidate, fuzzy=True)
+
+            if not re.search(r"\b\d{4}\b", due_date_text) and parsed_date.date() < today.date():
+                parsed_date = parsed_date.replace(year=today.year + 1)
+
+            return parsed_date
+        except (ValueError, TypeError):
+            continue
+
+    return None
     
   
 def create_assignment(service, course_id, title, description, due_date):
-    
-    today = datetime.now()
-
-    parsed_date = parser.parse(
-        f"{due_date} {today.year}"
-    )
-
-    # If parsed date already passed, assume next year
-    if parsed_date.date() < today.date():
-        parsed_date = parsed_date.replace(year=today.year + 1)
+    parsed_date = _parse_due_date(due_date)
     
     print("Creating assignment:", title)
     
@@ -36,16 +67,18 @@ def create_assignment(service, course_id, title, description, due_date):
         "description": description,
         "workType": "ASSIGNMENT",
         "state": "PUBLISHED",
-        "dueDate": {
+    }
+
+    if parsed_date:
+        coursework["dueDate"] = {
             "year": parsed_date.year,
             "month": parsed_date.month,
             "day": parsed_date.day
-        },
-        "dueTime": {
+        }
+        coursework["dueTime"] = {
             "hours": 23,
             "minutes": 59
         }
-    }
 
     return service.courses().courseWork().create(
         courseId=course_id,
@@ -97,110 +130,103 @@ def make_fingerprint(title, due_date):
     )
     
 def normalize_due_date(due_date):
+    parsed_date = _parse_due_date(due_date)
 
-    today = datetime.now()
-
-    parsed_date = parser.parse(
-        f"{due_date} {today.year}"
-    )
-
-    if parsed_date.date() < today.date():
-        parsed_date = parsed_date.replace(year=today.year + 1)
+    if not parsed_date:
+        return ""
 
     return parsed_date.strftime("%Y-%m-%d")
-    
-with open("firstrealsyllabus.json", "r", encoding="utf-8") as f:
-    data = json.load(f)
-
-service = get_classroom_service()
-
-coursework = service.courses().courseWork().list(
-    courseId=866843749172
-).execute()
-
-existing_assignments = coursework.get("courseWork", [])
 
 
-existing_fingerprints = set()
+if __name__ == "__main__":
+    with open("firstrealsyllabus.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-for assignment in existing_assignments:
+    service = get_classroom_service()
 
-    existing_title = assignment.get("title", "")
+    coursework = service.courses().courseWork().list(
+        courseId=866843749172
+    ).execute()
 
-    due = assignment.get("dueDate")
+    existing_assignments = coursework.get("courseWork", [])
 
-    if due:
-        existing_due = (
-            f"{due['year']}-"
-            f"{due['month']:02d}-"
-            f"{due['day']:02d}"
-        )
-    else:
-        existing_due = ""
+    existing_fingerprints = set()
 
-    fp = make_fingerprint(existing_title, existing_due)
+    for assignment in existing_assignments:
 
-    existing_fingerprints.add(fp)
+        existing_title = assignment.get("title", "")
 
+        due = assignment.get("dueDate")
 
+        if due:
+            existing_due = (
+                f"{due['year']}-"
+                f"{due['month']:02d}-"
+                f"{due['day']:02d}"
+            )
+        else:
+            existing_due = ""
 
+        fp = make_fingerprint(existing_title, existing_due)
 
-print("Starting uploader...")
+        existing_fingerprints.add(fp)
 
+    print("Starting uploader...")
 
-failed_items = []
+    failed_items = []
 
-for i, raw_item in enumerate(data):
+    for i, raw_item in enumerate(data):
 
-    try:
-        print(f"\n--- Processing item {i+1} ---")
+        try:
+            print(f"\n--- Processing item {i+1} ---")
 
-        # 1. Normalize AI output into clean structure
-        item = normalize_item(raw_item)
+            # 1. Normalize AI output into clean structure
+            item = normalize_item(raw_item)
 
-        # 2. Validate required fields exist
-        validate_item(item)
-        
-        # 3Check if assignment already exists to avoid duplicates
-        normalized_due = normalize_due_date(item["due_date"])
+            # 2. Validate required fields exist
+            validate_item(item)
 
-        fingerprint = make_fingerprint(
-            item["title"],
-            normalized_due
-        )
+            # 3. Check if assignment already exists to avoid duplicates
+            normalized_due = normalize_due_date(item["due_date"])
 
-        if fingerprint in existing_fingerprints:
-            print("SKIPPING DUPLICATE:", item["title"])
-            continue
-        # 4. Upload to Google Classroom
-        print("Creating assignment:", item["title"])
+            fingerprint = make_fingerprint(
+                item["title"],
+                normalized_due
+            )
 
-        result = create_assignment(
-            service,
-            course_id=866843749172,
-            title=item["title"],
-            description=item["description"],
-            due_date=item["due_date"]
-        )
+            if fingerprint in existing_fingerprints:
+                print("SKIPPING DUPLICATE:", item["title"])
+                continue
 
-        print("SUCCESS:", result.get("id"))
-        existing_fingerprints.add(fingerprint)
+            # 4. Upload to Google Classroom
+            print("Creating assignment:", item["title"])
 
-    except Exception as e:
-        print("FAILED ITEM:", raw_item)
-        print("ERROR:", str(e))
+            result = create_assignment(
+                service,
+                course_id=866843749172,
+                title=item["title"],
+                description=item["description"],
+                due_date=item["due_date"]
+            )
 
-        failed_items.append({
-            "item": raw_item,
-            "error": str(e)
-        })
-print("\nUPLOAD COMPLETE")
-print("Failed items:", len(failed_items))
-if failed_items:
-    print("\nFAILED ITEMS:")
-    
-    for item in failed_items:
-        print(item)
+            print("SUCCESS:", result.get("id"))
+            existing_fingerprints.add(fingerprint)
+
+        except Exception as e:
+            print("FAILED ITEM:", raw_item)
+            print("ERROR:", str(e))
+
+            failed_items.append({
+                "item": raw_item,
+                "error": str(e)
+            })
+
+    print("\nUPLOAD COMPLETE")
+    print("Failed items:", len(failed_items))
+    if failed_items:
+        print("\nFAILED ITEMS:")
+        for item in failed_items:
+            print(item)
 
 # BELOW is the way to get course ID do not delete
 

@@ -1,4 +1,4 @@
 SYLLABUS_ITEM_SCHEMA = {
-    "required": ["title", "description", "due_date"],
-    "optional": ["week", "topic", "reading"]
+    "required": ["title"],
+    "optional": ["description", "due_date", "week", "topic", "reading"]
 }

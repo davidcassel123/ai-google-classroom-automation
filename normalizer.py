@@ -12,7 +12,7 @@ def normalize_item(item):
 
         "description": item.get("description", ""),
 
-        "due_date": item.get("due_date", "1970-01-01"),
+        "due_date": item.get("due_date", ""),
 
         "week": item.get("week"),
         "topic": item.get("topic"),
